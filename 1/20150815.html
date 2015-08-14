@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>memo</title>
+		<link href="../css/bootstrap.min.css" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="container bg-info">
+			<h3>ActiveRecord 多:多の関係のレコードをいい感じに取得する</h3>
+			　
+
+includes を使うとデータの先読みをしてくれる。<br>
+結果ではpartyテーブルの情報しか返していないが、party_unitsへのクエリが実行されている
+<code>
+<pre>
+[39] pry(main)> Player.first.parties.includes(:party_units)
+  Player Load (0.2ms)  SELECT  `players`.* FROM `players`   ORDER BY `players`.`id` ASC LIMIT 1
+  Party Load (0.1ms)  SELECT `parties`.* FROM `parties`  WHERE `parties`.`player_id` = 1
+  PartyUnit Load (0.2ms)  SELECT `party_units`.* FROM `party_units`  WHERE `party_units`.`party_id` IN (1, 15)
+
+=> [#< Party id: 1, player_id: 1, created_at: "2015-07-09 16:56:56", updated_at: "2015-07-09 16:56:56">,
+ #< Party id: 15, player_id: 1, created_at: "2015-08-05 16:25:16", updated_at: "2015-08-05 16:25:16">]
+
+</pre>
+</code>
+party_units の情報にもアクセスできる
+<code>
+<pre>
+[43] pry(main)> Player.first.parties.includes(:party_units).each { |party| p party.party_units[0].unit_id }
+  Player Load (0.2ms)  SELECT  `players`.* FROM `players`   ORDER BY `players`.`id` ASC LIMIT 1
+  Party Load (0.2ms)  SELECT `parties`.* FROM `parties`  WHERE `parties`.`player_id` = 1
+  PartyUnit Load (0.2ms)  SELECT `party_units`.* FROM `party_units`  WHERE `party_units`.`party_id` IN (1, 15)
+1
+10
+=> [#< Party id: 1, player_id: 1, created_at: "2015-07-09 16:56:56", updated_at: "2015-07-09 16:56:56">,
+ #< Party id: 15, player_id: 1, created_at: "2015-08-05 16:25:16", updated_at: "2015-08-05 16:25:16">]
+</pre>
+</code>
+
+includes を使用しないと、都度selectが走ってしまうようだ。使いこなせば便利！
+<br>
+<br>
+参考
+<div class="well well-sm">
+<a href="http://qiita.com/minami7o/items/b2c81932756d2cd84d7d">似ているようで全然違う!?Activerecordにおけるincludesとjoinsの振る舞いまとめ</a><br>
+
+
+</div>
+
+			<a href="../index.html">戻る</a><br>
+		</div>
+  </body>
+</html>

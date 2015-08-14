@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>memo</title>
+		<link href="../css/bootstrap.min.css" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="container bg-info">
+			<h3>ActiveRecordの結果をHashに変換</h3>
+			　
+
+ActiveRecordの状態
+<code>
+<pre>
+[18] pry(main)> Player.first.parties
+=> [#< Party id: 1, player_id: 1, created_at: "2015-07-09 16:56:56", updated_at: "2015-07-09 16:56:56">,
+ #< Party id: 15, player_id: 1, created_at: "2015-08-05 16:25:16", updated_at: "2015-08-05 16:25:16">]
+</pre>
+</code>
+配列に変換する
+<code>
+<pre>
+[30] pry(main)> Player.first.parties.map{|party| party.attributes}
+=> [{"id"=>1, "player_id"=>1, "created_at"=>2015-07-09 16:56:56 +0900, "updated_at"=>2015-07-09 16:56:56 +0900},
+ {"id"=>15, "player_id"=>1, "created_at"=>2015-08-05 16:25:16 +0900, "updated_at"=>2015-08-05 16:25:16 +0900}]
+</pre>
+</code>
+
+キー的なものをもたせたい
+<code>
+<pre>
+[26] pry(main)> Player.first.parties.map{|party| [party.id, party.attributes]}
+=> [[1, {"id"=>1, "player_id"=>1,  "created_at"=>2015-07-09 16:56:56 +0900, "updated_at"=>2015-07-09 16:56:56 +0900}],
+ [15, {"id"=>15, "player_id"=>1, "created_at"=>2015-08-05 16:25:16 +0900, "updated_at"=>2015-08-05 16:25:16 +0900}]]
+</pre>
+</code>
+
+あーmember = Member.pluck(:id) #=> [1, 2, 3, 4, 5]　でもいけそう・・・。
+
+<hr>
+配列からActiveRecordへ
+※動作未確認
+<code>
+<pre>
+# items = [#<Item>, #<Item>, #<Item>]
+@items = Item.where(id: items.map{ |item| item.id })
+</pre>
+</code>
+</pre>
+</code>
+参考
+<div class="well well-sm">
+<a href="http://qiita.com/t4kmru/items/2a2b58bb801929b5e67c">railsでActiveRecordの結果をHashに変換する方法</a><br>
+<a href="http://qiita.com/wada811/items/12c74ed62c943c8c3f77">配列を ActiveRecord::Relation に変換する</a><br>
+
+</div>
+
+			<a href="../index.html">戻る</a><br>
+		</div>
+  </body>
+</html>
